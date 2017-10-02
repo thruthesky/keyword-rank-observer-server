@@ -1,9 +1,5 @@
 <?php
-
-
-include_once "ezSQL/shared/ez_sql_core.php";
-include_once "ezSQL/mysqli/ez_sql_mysqli.php";
-$db = new ezSQL_mysqli('root','7777','keyword-rank-observer','localhost');
+include 'db.php';
 
 
 dog($_REQUEST);
