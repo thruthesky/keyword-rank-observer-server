@@ -47,14 +47,15 @@ $name = in('name');
 
 
 $where = '1';
-$where .= " AND `date` BETWEEN $yearStart$monthStart$dayStart AND $yearEnd$monthEnd$dayEnd";
-if ($hourStart <= $hourEnd) $where .= " AND `time` BETWEEN $hourStart AND $hourEnd";
-if ($keyword) $where .= " AND keyword LIKE '%$keyword%'";
+$where .= " AND (`date` BETWEEN $yearStart$monthStart$dayStart AND $yearEnd$monthEnd$dayEnd)";
+if ($hourStart <= $hourEnd) $where .= " AND (`time` BETWEEN $hourStart AND $hourEnd)";
+if ($keyword) $where .= " AND keyword = '$keyword'";
 if ($platform) $where .= " AND platform = '$platform'";
-if ($name) $where .= " AND `name` LIKE '%$name%'";
+if ($name) $where .= " AND `name` LIKE '$name%'";
 
-//print_r('<br>' . 'WHERE ' . $where . '<br>');
-$rows = $db->get_results("SELECT * FROM keyword_ranks WHERE $where");
+$q = "SELECT * FROM keyword_ranks WHERE $where";
+print_r("$q<br>");
+$rows = $db->get_results($q);
 
 ?>
 
