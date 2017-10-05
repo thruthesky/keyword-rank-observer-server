@@ -1,44 +1,75 @@
-.searchOption ul {
+.statisticGraph {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border: 1px darkgrey solid;
+}
+.statisticGraph .bar {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.statisticGraph .bar .day {
+    height: 200px;
+    white-space: nowrap;
+    font-size: 0;
+}
+
+.statisticGraph .bar span {
+    display: inline-block;
+    width: 15px;
+    white-space: normal;
+    border: 1px black solid;
+}
+
+
+.legend {
+    display: inline-block;
+    margin-bottom: .5em;
+    border: 1px solid black;
+}
+
+.legend ul {
+    margin: 0;
+    padding: 0;
+}
+
+.legend .box {
+    line-height: 0;
+    font-size: 1.5em;
+}
+
+.list ul {
     overflow: auto;
 }
 
-.searchOption ul {
+.list ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.searchOption ul:after {
+.list ul:after {
     display: block;
     content: '';
     clear: both;
 }
 
-.searchOption ul li {
+.list ul li {
     float: left;
-    border: 1px solid #000;
     padding: 5px;
 }
+.statisticGraph .daily-container {
 
-.statisticGraph {
-    overflow-x: auto;
-    position: relative;
-    height: 100px;
+}
+
+.statisticGraph .daily-note {
+    position: absolute;
+    bottom: -20px;
+    margin: 0 auto;
     width: 100%;
-    border: 1px darkgrey solid;
-}
-.statisticGraph .bar {
-    position: relative;
-    float: left;
-    height: 100%;
+    text-align: center;
 }
 
-.statisticGraph .bar span {
-    position: relative;
-    display: inline-block;
-    float: left;
-    margin: 0;
-    padding: 0;
-    width:1px;
-    background-color: #00bdff;
-}
+
+

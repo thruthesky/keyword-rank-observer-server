@@ -10,9 +10,7 @@ include 'db.php';
 include 'function.php';
 
 
-//$data = $_REQUEST;
-//print_r($data);
-
+$colors = ['lightgreen', 'blue', 'violet', 'yellow', 'orange', 'red'];
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 $hourStart = '0000';
 $hourEnd = '2300';
@@ -46,22 +44,31 @@ $platform = in('platform');
 $name = in('name');
 
 
-$where = '1';
-$where .= " AND (`date` BETWEEN $yearStart$monthStart$dayStart AND $yearEnd$monthEnd$dayEnd)";
-if ($hourStart <= $hourEnd) $where .= " AND (`time` BETWEEN $hourStart AND $hourEnd)";
-if ($keyword) $where .= " AND keyword = '$keyword'";
-if ($platform) $where .= " AND platform = '$platform'";
-if ($name) $where .= " AND `name` LIKE '$name%'";
+$dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
+$dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
 
-$q = "SELECT * FROM keyword_ranks WHERE $where";
-print_r("$q<br>");
-$rows = $db->get_results($q);
+$dateInterval = ($dateEnd - $dateStart) / 300;
+if ($dateInterval < 0) echo "Date Start cant be ahead of Date End";
+else {
+    $where = '1';
+    $where .= " AND (`date` BETWEEN $yearStart$monthStart$dayStart AND $yearEnd$monthEnd$dayEnd)";
+    if ($hourStart <= $hourEnd) $where .= " AND (`time` BETWEEN $hourStart AND $hourEnd)";
+    if ($keyword) $where .= " AND keyword = '$keyword'";
+    if ($platform) $where .= " AND platform = '$platform'";
+//    if ($name) $where .= " AND `name` LIKE '$name%'";
+
+    $q = "SELECT * FROM keyword_ranks WHERE $where";
+    print_r("$q<br>");
+    $rows = $db->get_results($q);
+
+    if (!empty($rows)) $statistic = prepareGraph($rows, $name);
+}
 
 ?>
 
-<h2>Key work rank statistics</h2>
+<h2>Keyword Rank Statistics</h2>
 <form method="GET">
-    <nav class="searchOption">
+    <nav class="searchOption list">
         <ul>
             <li>
                 Date Start
@@ -116,7 +123,7 @@ $rows = $db->get_results($q);
                     </select>
                     <select name="hourEnd" onchange="this.form.submit()">
                         <?php
-                        for ($i = 0; $i < 24; $i++) {
+                        for ($i = 1; $i <= 24; $i++) {
                             $hr = add0($i, '00');
                             ?>
                             <option value="<?php echo $hr ?>" <?php if ($hr == $hourEnd) echo ' selected' ?>><?php echo showTime($i) ?></option>
@@ -152,24 +159,137 @@ $rows = $db->get_results($q);
 
 <br>
 
+<div class="list legend">
+    <ul>
+        <li>
+            <span class="box" style="color: <?php echo $colors[0] ?>">■</span>Rank 1
+        </li>
+        <li>
+            <span class="box" style="color: <?php echo $colors[1] ?>">■</span>Rank 2
+        </li>
+        <li>
+            <span class="box" style="color: <?php echo $colors[2] ?>">■</span>Rank 3
+        </li>
+        <li>
+            <span class="box" style="color: <?php echo $colors[3] ?>">■</span>Rank 4
+        </li>
+        <li>
+            <span class="box" style="color: <?php echo $colors[4] ?>">■</span>Rank 5
+        </li>
+        <li>
+            <span class="box" style="color: <?php echo $colors[5] ?>">■</span>No Appearance
+        </li>
+    </ul>
+</div>
+
+
 <?php
-if (!empty($rows)) {
 
-    echo "<div class=\"statisticGraph\">";
-    echo "<div class=\"bar\">";
-    foreach ($rows as $row) {
+if (!empty($statistic)) {
+    $dHeight = 200;
+    $npHeight = 20;
+    $npTop = $dHeight - $npHeight;
+    foreach ($statistic as $rows) {
 
-        $info = 'Date: ' . $row->date . ' ' . showTime($row->time);
-        $height = (6 - $row->rank) * 20;
-        $top = 100 - $height;
+        echo "<h2>$name  $rows[title]</h2>";
 
-        $data = "style='height:$height" . "px; top:$top" . "px;' title='$info'";
-        echo "<span $data></span>";
+//    echo "<pre>";
+//    print_r($rows['data']);
+//    echo "</pre>";
+        echo "<div class=\"statisticGraph\">";
+        echo "<div class=\"bar\">";
+        echo "<div class=\"day\">";
+
+
+        if (!empty($rows['data'])) {
+
+            $h = 0;
+            $min = 0;
+            $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
+
+            foreach ($rows['data'] as $row) {
+
+                $y = getYear($row['date']);
+                $m = getMonth($row['date']);
+                $d = getDay($row['date']);
+                $h = getHour($row['time']);
+                $min = getMinute($row['time']);
+                $dateEnd = strtotime("$y-$m-$d " . $h . ':' . $min);
+                $dateInterval = floor((($dateEnd - $dateStart) / 300));
+//            print_r("$dateEnd - $dateStart /300 = $dateInterval<br>");
+
+
+                /**
+                 * Red lines from start and in between
+                 */
+                for ($i = 1; $i < $dateInterval; $i++) {
+                    $currentTime = $h . $min;
+//                print_r("$currentTime > $hourStart && $currentTime < $hourEnd");
+                    if ($currentTime < $hourStart || $currentTime > $hourEnd) continue;
+                    $date = date("M d Y h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+                    $time = date("h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+                    $data = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$date'";
+                    echo "<span $data></span>";
+                }
+
+
+                $date = date("M d Y", mktime($h, $min, 0, $m, $d, $y));
+                $info = 'Rank: ' . $row['rank']
+                    . ' Keyword: ' . $row['keyword'] . ', '
+                    . ' Name: ' . $row['name'] . ', '
+                    . $date . ' ' . showTime($row['time']);
+                $height = (6 - $row['rank']) * ($dHeight / 5);
+                $top = $dHeight - $height;
+                $color = $colors[(int)$row['rank'] - 1];
+
+                $data = "style='height:$height" . "px; margin-top:$top" . "px; background-color: $color;' title='$info'";
+                echo "<span $data></span>";
+
+                $dateStart = $dateEnd;
+            }
+
+            $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
+            $dateInterval = ($dateEnd - $dateStart) / 300;
+
+
+            /**
+             * Red lines after the record until the end of selected date
+             */
+            for ($i = 1; $i < $dateInterval; $i++) {
+                $currentTime = $h . $min;
+//                print_r("$currentTime > $hourStart && $currentTime < $hourEnd");
+                if ($currentTime < $hourStart || $currentTime > $hourEnd) continue;
+                $date = date("M d Y h:ia", mktime($h, ($i * 5) + $min, 0, $monthStart, $dayStart, $yearStart));
+                $time = date("h:ia", mktime($h, ($i * 5) + $min, 0, $monthStart, $dayStart, $yearStart));
+                $data = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$date'";
+                echo "<span $data></span>";
+            }
+
+        } else {
+
+
+            /**
+             * red lines if no record is found
+             */
+            $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
+            $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
+            $dateInterval = ($dateEnd - $dateStart) / 300;
+
+            for ($i = 1; $i < $dateInterval; $i++) {
+                $date = date("M d Y h:ia", mktime(0, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+                $time = date("h:ia", mktime(0, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+                $data = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$date'";
+                echo "<span $data></span>";
+            }
+        }
+
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
 
     }
 }
-echo "</div>";
-echo "</div>";
+
 ?>
 
 </body>
