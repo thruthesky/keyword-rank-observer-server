@@ -63,8 +63,8 @@ function prepareGraph($rows, $name = null)
     $titles = [];
     $graphs = [];
     foreach ($rows as $row) {
-
-        if ( $name && $row->name != $name) continue;
+//        print_r(strpos($row->name, $name));
+        if ( $name && strpos($row->name, $name) !== 0 ) continue;
 
         $title = $row->title;
         if (!in_array($title, $titles)) {
