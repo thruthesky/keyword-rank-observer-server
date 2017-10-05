@@ -190,8 +190,8 @@ if (!empty($statistic)) {
     $npHeight = 20;
     $npTop = $dHeight - $npHeight;
     foreach ($statistic as $rows) {
-
-        echo "<h2>$name  $rows[title]</h2>";
+        $header = "$rows[title]. " . implode(',', $rows['names']);
+        echo "<h3>$header</h3>";
 
 //    echo "<pre>";
 //    print_r($rows['data']);

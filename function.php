@@ -84,6 +84,7 @@ function prepareGraph($rows, $name = null)
 
         $graphs[$index]['data'][] = $data;
         if(empty($graphs[$index]['title'])) $graphs[$index]['title'] = $title;
+        if(empty($graphs[$index]['names']) || !in_array($row->name,$graphs[$index]['names'])) $graphs[$index]['names'][] = $row->name;
     }
 //    echo "<pre>";
 //    print_r($graphs);
