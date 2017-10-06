@@ -210,7 +210,7 @@ if (!empty($statistic)) {
             $min = 0;
             $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
             $currentDay = '';
-            foreach ($rows['data'] as $row) {
+            foreach ($rows['data'] as $in =>$row) {
                 $rowTime = $row['time'];
                 $rowDate = $row['date'];
                 $y = getYear($rowDate);
@@ -220,7 +220,7 @@ if (!empty($statistic)) {
                 $min = getMinute($rowTime);
                 $dateEnd = strtotime("$y-$m-$d " . $h . ':' . $min);
                 $dateInterval = floor((($dateEnd - $dateStart) / 300));
-                if ($hourStart <= $rowTime && $rowTime <= ($hourStart + 5)) {
+                if ( $in == 0 || $hourStart <= $rowTime && $rowTime <= ($hourStart + 5)) {
                     echo "<div class=\"day\">";
                     echo "<div class='indicator'><div class='leftArrow'></div>$rowDate<div class='rightArrow'></div></div>";
                     $firstDate = $rowDate;
