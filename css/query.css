@@ -11,7 +11,7 @@
 }
 .statisticGraph .bar .day {
     position: relative;
-    /*display: table-cell;*/
+    display: table-cell;
     height: 200px;
     white-space: nowrap;
     font-size: 0;
