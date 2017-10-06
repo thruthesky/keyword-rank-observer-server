@@ -27,7 +27,7 @@ function showTime($time)
     } else {
         $h = getHour($time);
         $m = getMinute($time);
-        return date('h:ia', mktime($h, $m));
+        return date('h:ia', mktime((int)$h, (int)$m));
 
     }
 }
