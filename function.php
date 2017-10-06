@@ -69,23 +69,28 @@ function prepareGraph($rows, $target_name = null)
 		$name = $row->name;
 
 
-		if ( ! isset($res[$title]) ) $res[$title] = [];
-		if ( ! isset( $res[$title][ $name ] ) ) $res[$title][ $name ] = [];
+		if ( ! isset($res[$title]) ) $res[$title] = [ 'rank' => $row->rank, 'data' => [] ];
+		if ( ! isset( $res[$title][ 'names' ] ) ) $res[$title][ 'names' ] = [];
+		if ( !in_array($name, $res[$title]['names']) ) array_push($res[$title]['names'], $name);
 
 		$data = [
-			'rank' => $row->rank,
 			'date' => $row->date,
 			'time' => $row->time,
 			'keyword' => $row->keyword
 		];
+		$res[$title]['data'][] = $data;
 
-//		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
-		$res[ $title ][ $name ][] = $data;
+
+////		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
+//		$res[ $title ][ $name ][] = $data;
 
 
 	}
 
-	
+	echo "<pre>";
+	print_r($res);
+	exit;
+
 	return $res;
 
 
