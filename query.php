@@ -57,8 +57,10 @@ else {
     if ($platform) $where .= " AND platform = '$platform'";
 //    if ($name) $where .= " AND `name` LIKE '$name%'";
 
-    $q = "SELECT * FROM keyword_ranks WHERE $where";
+    $q = "SELECT idx, platform, keyword, `date`, `time`, `name`, title, `type`, `rank` FROM keyword_ranks WHERE $where";
     print_r("$q<br>");
+
+
     $rows = $db->get_results($q);
 
     if (!empty($rows)) $statistic = prepareGraph($rows, $name);
@@ -194,9 +196,15 @@ if (!empty($statistic)) {
 
 
 
-    foreach ($statistic as $rows) {
-        $header = "$rows[title]. " . implode(',', $rows['names']);
+    foreach ($statistic as $title => $names ) {
+        $header = "$title. " . implode(',', array_keys($names));
         echo "<h3>$header</h3>";
+
+        foreach ( $names as $name => $datas ) {
+            echo "<h4>$name</h4>";
+            print_r($datas);
+        }
+        continue;
 
 //    echo "<pre>";
 //    print_r($rows['data']);

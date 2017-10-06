@@ -58,37 +58,66 @@ function getMinute($time)
 }
 
 
-function prepareGraph($rows, $name = null)
+function prepareGraph($rows, $target_name = null)
 {
-    $titles = [];
-    $graphs = [];
-    foreach ($rows as $row) {
-//        print_r(strpos($row->name, $name));
-        if ( $name && strpos($row->name, $name) !== 0 ) continue;
 
-        $title = $row->title;
-        if (!in_array($title, $titles)) {
-            $titles[] = $title;
-        }
+	$res = [];
+	foreach ( $rows as $row ) {
+		if ( $target_name && strpos($row->name, $target_name) !== 0 ) continue;
 
-        $index = array_search($title, $titles);
-
-        $data = [
-            'rank' => $row->rank,
-            'date' => $row->date,
-            'time' => $row->time,
-            'keyword' => $row->keyword,
-            'name' => $row->name
-        ];
+		$title = $row->title;
+		$name = $row->name;
 
 
-        $graphs[$index]['data'][] = $data;
-        if(empty($graphs[$index]['title'])) $graphs[$index]['title'] = $title;
-        if(empty($graphs[$index]['names']) || !in_array($row->name,$graphs[$index]['names'])) $graphs[$index]['names'][] = $row->name;
-    }
-//    echo "<pre>";
-//    print_r($graphs);
-//    echo "</pre>";
+		if ( ! isset($res[$title]) ) $res[$title] = [];
+		if ( ! isset( $res[$title][ $name ] ) ) $res[$title][ $name ] = [];
 
-    return $graphs;
+		$data = [
+			'rank' => $row->rank,
+			'date' => $row->date,
+			'time' => $row->time,
+			'keyword' => $row->keyword
+		];
+
+//		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
+		$res[ $title ][ $name ][] = $data;
+
+
+	}
+
+	
+	return $res;
+
+
+
+//    $titles = [];
+//    $graphs = [];
+//    foreach ($rows as $row) {
+////        print_r(strpos($row->name, $name));
+//        if ( $name && strpos($row->name, $name) !== 0 ) continue;
+//
+//        $title = $row->title;
+//        if (!in_array($title, $titles)) {
+//            $titles[] = $title;
+//        }
+//
+//        $index = array_search($title, $titles);
+//
+//        $data = [
+//            'rank' => $row->rank,
+//            'date' => $row->date,
+//            'time' => $row->time,
+//            'keyword' => $row->keyword,
+//            'name' => $row->name
+//        ];
+//
+//
+//        $graphs[$index]['data'][] = $data;
+//        if(empty($graphs[$index]['title'])) $graphs[$index]['title'] = $title;
+//        if(empty($graphs[$index]['names']) || !in_array($row->name,$graphs[$index]['names'])) $graphs[$index]['names'][] = $row->name;
+//    }
+//
+//
+//
+//    return $graphs;
 }
