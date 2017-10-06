@@ -189,6 +189,11 @@ if (!empty($statistic)) {
     $dHeight = 200;
     $npHeight = 20;
     $npTop = $dHeight - $npHeight;
+    $firstDate = '';
+    $lastDate = '' . $yearEnd . $monthEnd . $dayEnd;
+
+
+
     foreach ($statistic as $rows) {
         $header = "$rows[title]. " . implode(',', $rows['names']);
         echo "<h3>$header</h3>";
@@ -198,8 +203,6 @@ if (!empty($statistic)) {
 //    echo "</pre>";
         echo "<div class=\"statisticGraph\">";
         echo "<div class=\"bar\">";
-        echo "<div class=\"day\">";
-
 
         if (!empty($rows['data'])) {
 
@@ -208,28 +211,34 @@ if (!empty($statistic)) {
             $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
 
             foreach ($rows['data'] as $row) {
-
-                $y = getYear($row['date']);
-                $m = getMonth($row['date']);
-                $d = getDay($row['date']);
-                $h = getHour($row['time']);
-                $min = getMinute($row['time']);
+                $rowTime = $row['time'];
+                $rowDate = $row['date'];
+                $y = getYear($rowDate);
+                $m = getMonth($rowDate);
+                $d = getDay($rowDate);
+                $h = getHour($rowTime);
+                $min = getMinute($rowTime);
                 $dateEnd = strtotime("$y-$m-$d " . $h . ':' . $min);
                 $dateInterval = floor((($dateEnd - $dateStart) / 300));
-//            print_r("$dateEnd - $dateStart /300 = $dateInterval<br>");
+                if ($hourStart <= $rowTime && $rowTime <= ($hourStart + 5)) {
+                    echo "<div class=\"day\">";
+                    echo "<div class='indicator'>$rowDate</div>";
+                    $firstDate = $rowDate;
+                }
 
 
                 /**
                  * Red lines from start and in between
                  */
                 for ($i = 1; $i < $dateInterval; $i++) {
+
                     $currentTime = $h . $min;
-//                print_r("$currentTime > $hourStart && $currentTime < $hourEnd");
                     if ($currentTime < $hourStart || $currentTime > $hourEnd) continue;
                     $date = date("M d Y h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
                     $time = date("h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
                     $data = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$date'";
                     echo "<span $data></span>";
+
                 }
 
 
@@ -237,13 +246,16 @@ if (!empty($statistic)) {
                 $info = 'Rank: ' . $row['rank']
                     . ' Keyword: ' . $row['keyword'] . ', '
                     . ' Name: ' . $row['name'] . ', '
-                    . $date . ' ' . showTime($row['time']);
+                    . $date . ' ' . showTime($rowTime);
                 $height = (6 - $row['rank']) * ($dHeight / 5);
                 $top = $dHeight - $height;
                 $color = $colors[(int)$row['rank'] - 1];
 
                 $data = "style='height:$height" . "px; margin-top:$top" . "px; background-color: $color;' title='$info'";
                 echo "<span $data></span>";
+                if (($hourEnd - 45) <= $rowTime && $rowTime <= $hourEnd) {
+                    echo "</div>";
+                }
 
                 $dateStart = $dateEnd;
             }
@@ -264,6 +276,7 @@ if (!empty($statistic)) {
                 $data = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$date'";
                 echo "<span $data></span>";
             }
+
 
         } else {
 

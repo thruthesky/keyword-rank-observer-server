@@ -8,11 +8,20 @@
 .statisticGraph .bar {
     overflow-x: auto;
     overflow-y: hidden;
+    font-size: 0;
 }
 .statisticGraph .bar .day {
+    position: relative;
+    display: inline-block;
     height: 200px;
-    white-space: nowrap;
-    font-size: 0;
+    white-space: normal;
+}
+
+.statisticGraph .bar .day .indicator {
+    position: absolute;
+    width:100%;
+    font-size: 16px;
+    text-align: center;
 }
 
 .statisticGraph .bar span {
