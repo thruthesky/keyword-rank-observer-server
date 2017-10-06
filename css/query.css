@@ -2,7 +2,6 @@
     position: relative;
     margin: 0;
     padding: 0;
-    width: 100%;
     border: 1px darkgrey solid;
 }
 .statisticGraph .bar {
@@ -18,12 +17,35 @@
 }
 
 .statisticGraph .bar .day .indicator {
-    float: left;
-    font-size: 16px;
-    width: 100%;
-    text-align: center;
+     position: absolute;
+    top:0;
+     font-size: 16px;
+     width: 100%;
+     text-align: center;
+     /* text-align: center; */
+ }
+
+.statisticGraph .bar .day .rightArrow {
     position: absolute;
-    /* text-align: center; */
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 5px 16px 0;
+    border-color: transparent #ff0000 transparent transparent;
+}
+
+.statisticGraph .bar .day .leftArrow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 16px 5px 0 0;
+    border-color: #ff0000 transparent transparent transparent;
+
 }
 
 .statisticGraph .bar span {
