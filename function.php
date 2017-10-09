@@ -68,10 +68,10 @@ function prepareGraph($rows, $target_name = null)
         $time = $row->time;
         if (!$prev_time) $prev_time = $time;
         $timeInterval = $time - $prev_time;
-        if (($timeInterval ) > 6 && $timeInterval < 45 ) {
-            $err_count = true;
+        if (($timeInterval) > 6 && $timeInterval < 45) {
+            $status = false;
         } else {
-            $err_count = false;
+            $status = true;
         }
         $prev_time = $time;
 
@@ -81,34 +81,34 @@ function prepareGraph($rows, $target_name = null)
         $name = $row->name;
         $date = $row->date;
         $keyword = $row->keyword;
+        $platform = $row->platform;
 
 
-        if (!isset($res[$title])) $res[$title] = ['rank' => $row->rank, 'keyword' => $keyword, 'dates' => []];
-        if (!isset($res[$title]['names'])) $res[$title]['names'] = [];
-        if (!in_array($name, $res[$title]['names'])) array_push($res[$title]['names'], $name);
+//        if (!isset($res[$title])) $res[$title] = ['keyword' => $keyword, 'dates' => []];
+        if (!isset($res[$title])) $res[$title] = [
+            'keyword' => $keyword,
+            'platform' => []
+        ];
+        if (!isset($res[$title]['platform'][$platform])) $res[$title]['platform'][$platform] = [];
+        if (!isset($res[$title]['platform'][$platform]['names'])) $res[$title]['platform'][$platform]['names'] = [];
+        if (!in_array($name, $res[$title]['platform'][$platform]['names'])) array_push($res[$title]['platform'][$platform]['names'], $name);
 
 
-        if (!isset($res[$title]['dates'][$date])) $res[$title]['dates'][$date] = [];
-        if ($err_count) $res[$title]['dates'][$date][$time] = false;
-        $res[$title]['dates'][$date][$time] = true;
-        
+        if (!isset($res[$title]['platform'][$platform]['dates'][$date])) $res[$title]['platform'][$platform]['dates'][$date] = [];
 
-////		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
+        $res[$title]['platform'][$platform]['dates'][$date][$time] = [
+            'status' => $status,
+            'rank' => $row->rank
+        ];
+
+
+//		if ( count($res[$title]['platform'][$platform]['dates']) > 1 ) continue; // TEST CODe
 //		$res[ $title ][ $name ][] = $data;
     }
-//
-//	echo "<pre>";
-//	print_r($res);
-//	exit;
+
+//    echo "<pre>";
+//    print_r($res);
+//    exit;
 
     return $res;
-
-//
-//    [0] => 0926
-//    [1] => 0931
-//    [2] => 0936
-//    [3] => 0941
-//    [4] => 0946
-//    [5] => 0951
-//    [6] => 0956
 }
