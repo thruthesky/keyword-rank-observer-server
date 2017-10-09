@@ -277,22 +277,21 @@ if (!empty($graphs)) {
 
                     echo "<span $data></span>";
                     $dateStart = $dateEnd;
+
                 }
 
-//                $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
-//                $dateInterval = ($dateEnd - $dateStart) / 300;
-//                /**
-//                 * Red lines after the record until the end of selected date
-//                 */
-//                for ($i = 1; $i < $dateInterval; $i++) {
-//                    $currentTime = date("Hi", mktime($h, $min + $i * 5, 0));
-////                    $stime = date("Hi", mktime($h, $min + $i * 5, 0));
-////                    print_r("``$currentTime```~~~~$stime~~~");
-//                    if ($currentTime < $hourStart || $currentTime > $hourEnd || $currentTime == '2400' ) continue;
-//                    $now = date("M d Y h:ia", mktime($h, ($i * 5) + $min, 0, $m, $d, $y));
-//                    $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[6];' title='$now'";
-//                    echo "<span $attr></span>";
-//                }
+                $dateEnd = strtotime("$y-$m-$d " . getHour($hourEnd) . ':' . getMinute($hourEnd));
+                $dateInterval = ($dateEnd - $dateStart) / 300;
+                /**
+                 * Red lines after the record until the end of selected date
+                 */
+                for ($i = 1; $i < $dateInterval; $i++) {
+                    $currentTime = date("Hi", mktime($h, $min + $i * 5, 0));
+                    if ($currentTime < $hourStart || $currentTime > $hourEnd || $currentTime == '2400' ) continue;
+                    $now = date("M d Y h:ia", mktime($h, ($i * 5) + $min, 0, $m, $d, $y));
+                    $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[6];' title='$now'";
+                    echo "<span $attr></span>";
+                }
                 echo "</div>";
             }
             echo "</div>";
