@@ -68,14 +68,14 @@ function prepareGraph($rows, $target_name = null)
     foreach ($rows as $row) {
 
         $time = $row->time;
-//        if (!$prev_time) $prev_time = $time;
-//        $timeInterval = $time - $prev_time;
-//        if (($timeInterval ) > 6 && $timeInterval < 45 ) {
-//            $err_count = true;
-//        } else {
-//            $err_count = false;
-//        }
-//        $prev_time = $time;
+        if (!$prev_time) $prev_time = $time;
+        $timeInterval = $time - $prev_time;
+        if (($timeInterval ) > 6 && $timeInterval < 45 ) {
+            $err_count = true;
+        } else {
+            $err_count = false;
+        }
+        $prev_time = $time;
 
         if ($target_name && strpos($row->name, $target_name) !== 0) continue;
 
@@ -90,25 +90,26 @@ function prepareGraph($rows, $target_name = null)
         if (!in_array($name, $res[$title]['names'])) array_push($res[$title]['names'], $name);
 
         if (!isset($res[$title]['dates'][$date])) $res[$title]['dates'][$date] = [];
-//        if ($err_count) $res[$title]['dates'][$date][] = 'x';
+        if ($err_count) $res[$title]['dates'][$date][] = 'x';
 
-        $res[$title]['dates'][$date][] = $time;
+        if (!in_array($time, $res[$title]['dates'][$date])) $res[$title]['dates'][$date][] = $time;
 
 ////		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
 //		$res[ $title ][ $name ][] = $data;
     }
 //
-	echo "<pre>";
-	print_r($res);
-	exit;
+//	echo "<pre>";
+//	print_r($res);
+//	exit;
 
     return $res;
 
-
-
-//    [0] => 0801
-//    [1] => 0806
-//    [2] => 0811
-//    [3] => 0816
-
+//
+//    [0] => 0926
+//    [1] => 0931
+//    [2] => 0936
+//    [3] => 0941
+//    [4] => 0946
+//    [5] => 0951
+//    [6] => 0956
 }
