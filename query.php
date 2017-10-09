@@ -190,10 +190,11 @@ else {
 
 <?php
 
+$dHeight = 200;
+$npHeight = 20;
+$npTop = $dHeight - $npHeight;
+
 if (!empty($graphs)) {
-    $dHeight = 200;
-    $npHeight = 20;
-    $npTop = $dHeight - $npHeight;
 
     foreach ($graphs as $title => $graph) {
         $header = "$title. " . implode(',', $graph['names']);
@@ -205,7 +206,6 @@ if (!empty($graphs)) {
             $d = 0;
             $h = 0;
             $min = 0;
-
             $daysInterval = $dayEnd - $dayStart;
             for ($i = 0; $i <= $daysInterval; $i++) {
                 $dates = date("Ymd", mktime(0, 0, 0, $monthStart, $dayStart + $i, $yearStart));
@@ -229,13 +229,12 @@ if (!empty($graphs)) {
 
 
                 foreach ($times as $time) {
+                    if ($time == '0000') continue;
                     if ($time == 'x') {
                         $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: black;'";
                         echo "<span $attr></span>";
                         continue;
                     }
-                    global $h;
-                    global $min;
                     $h = getHour($time);
                     $min = getMinute($time);
                     $currentDate = date("M d Y", mktime($h, $min, 0, $m, $d, $y));
@@ -246,10 +245,7 @@ if (!empty($graphs)) {
                      * Red lines from start and in between
                      */
                     for ($i = 1; $i < $dateInterval; $i++) {
-//                        print_r(floor((($min + $i - 1) * 5) / 60));
-//                        print_r("~~~add0($h + floor((($min + $i - 1) * 5) / 60)) . add0((($min + $i - 1) * 5) % 60)~~~");
                         $currentTime = add0($h + floor(($min + ($i - 1) * 5) / 60)) . add0(($min + ($i - 1) * 5) % 60);
-                        echo "@@@(int)$currentTime < (int)$hourStart || (int)$currentTime > (int)$hourEnd@@@";
                         if ((int)$currentTime > (int)$hourEnd) break;
                         if ((int)$currentTime < (int)$hourStart) continue;
                         $now = date("M d Y h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
@@ -257,7 +253,6 @@ if (!empty($graphs)) {
                         echo "<span $attr></span>";
                     }
 
-                    if ($time < $hourStart) continue;
 
                     $rank = $graph['rank'];
                     $info = 'Rank: ' . $rank
@@ -279,9 +274,8 @@ if (!empty($graphs)) {
                  * Red lines after the record until the end of selected date
                  */
                 for ($i = 1; $i < $dateInterval; $i++) {
-                    $currentTime = add0($h + floor(($min + $i  * 5) / 60)) . add0(($min + $i * 5) % 60);
-                    echo "###$currentTime > $hourStart && $currentTime > $hourEnd###";
-                    if((int)$currentTime > (int)$hourEnd) break;
+                    $currentTime = add0($h + floor(($min + $i * 5) / 60)) . add0(($min + $i * 5) % 60);
+                    if ((int)$currentTime > (int)$hourEnd) break;
                     if ((int)$currentTime < (int)$hourStart) continue;
                     $now = date("M d Y h:ia", mktime($h, ($i * 5) + $min, 0, $m, $d, $y));
                     $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
@@ -294,24 +288,46 @@ if (!empty($graphs)) {
             echo "</div>";
             echo "</div>";
 
-        } else {
-            /**
-             * red lines if no record is found
-             */
-            $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
-            $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
-            $dateInterval = ($dateEnd - $dateStart) / 300;
-
-            for ($i = 1; $i < $dateInterval; $i++) {
-
-                $now = date("M d Y h:ia", mktime(0, $i * 5, 0, $monthStart, $dayStart, $yearStart));
-                $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
-                echo "<span $attr></span>";
-            }
         }
 
     }
 }
+//else {
+//
+//    $dummyGraph = [];
+//    $daysInterval = $dayEnd - $dayStart;
+//    for ($i = 0; $i <= $daysInterval; $i++) {
+//        $dates = date("Ymd", mktime(0, 0, 0, $monthStart, $dayStart + $i, $yearStart));
+//        if (!array_key_exists($dates, $graph['dates'])) {
+//            $graph['dates'][$dates] = ["0000"];
+//        }
+//    }
+//
+//
+//    /**
+//     * red lines if no record is found
+//     */
+//    $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
+//    $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
+//    $dateInterval = ($dateEnd - $dateStart) / 300;
+//
+//    echo "<div class=\"statisticGraph\">";
+//    echo "<div class=\"bar\">";
+//    echo "<div class=\"day\">";
+//    echo "<div class='indicator'><span class='leftArrow'></span>$indicator<span class='rightArrow'></span></div>";
+//    for ($i = 1; $i < $dateInterval; $i++) {
+//
+//        $now = date("M d Y h:ia", mktime(0, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+//        $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
+//        echo "<span $attr></span>";
+//    }
+//    echo "</div>";
+//    echo "</div>";
+//    echo "</div>";
+//}
+//
+//
+
 
 ?>
 

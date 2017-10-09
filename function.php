@@ -62,8 +62,6 @@ function prepareGraph($rows, $target_name = null)
 {
 
     $res = [];
-
-    $err_count = false;
     $prev_time = null;
     foreach ($rows as $row) {
 
