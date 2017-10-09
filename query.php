@@ -208,6 +208,12 @@ if (!empty($graphs)) {
 
 
                 foreach ($times as $time) {
+                    if($time == 'x') {
+                        $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: black;'";
+                        echo "<span $attr></span>";
+                        continue;
+                    }
+
                     $y = getYear($date);
                     $m = getMonth($date);
                     $d = getDay($date);
@@ -216,12 +222,17 @@ if (!empty($graphs)) {
                     $currentDate = date("M d Y", mktime($h, $min, 0, $m, $d, $y));
                     $dateEnd = strtotime("$y-$m-$d " . $h . ':' . $min);
                     $dateInterval = floor((($dateEnd - $dateStart) / 300));
+
+
+                    print_r("\"$y-$m-$d \" . $h . ':' . $min");
+                    print_r("$yearStart-$monthStart-$dayStart \"" . getHour($hourStart) ." ':' ". getMinute($hourStart));
                     /**
                      * Red lines from start and in between
                      */
                     for ($i = 1; $i < $dateInterval; $i++) {
                         $currentTime = $h . $min;
-                        if ($currentTime < $hourStart || $currentTime > $hourEnd) continue;
+                        echo "@@@(int)$currentTime > (int)$hourStart || (int)$currentTime > (int)$hourEnd@@@";
+//                        if ((int)$currentTime > (int)$hourStart || (int)$currentTime > (int)$hourEnd) continue;
                         $now = date("M d Y h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
                         $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
                         echo "<span $attr></span>";
@@ -250,7 +261,9 @@ if (!empty($graphs)) {
                  */
                 for ($i = 1; $i < $dateInterval; $i++) {
                     $currentTime = $h . $min;
-                    if ($currentTime < $hourStart || $currentTime > $hourEnd) continue;
+
+                    echo "###$currentTime > $hourStart && $currentTime > $hourEnd###";
+                    if ((int)$currentTime > (int)$hourStart || (int)$currentTime > (int)$hourEnd) continue;
                     $now = date("M d Y h:ia", mktime($h, ($i * 5) + $min, 0, $monthStart, $dayStart, $yearStart));
                     $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
                     echo "<span $attr></span>";
@@ -263,18 +276,19 @@ if (!empty($graphs)) {
             echo "</div>";
 
         } else {
-            /**
-             * red lines if no record is found
-             */
-            $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
-            $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
-            $dateInterval = ($dateEnd - $dateStart) / 300;
-
-            for ($i = 1; $i < $dateInterval; $i++) {
-                $now = date("M d Y h:ia", mktime(0, $i * 5, 0, $monthStart, $dayStart, $yearStart));
-                $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
-                echo "<span $attr></span>";
-            }
+//            /**
+//             * red lines if no record is found
+//             */
+//            $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
+//            $dateEnd = strtotime("$yearEnd-$monthEnd-$dayEnd " . getHour($hourEnd) . ':' . getMinute($hourEnd));
+//            $dateInterval = ($dateEnd - $dateStart) / 300;
+//
+//            for ($i = 1; $i < $dateInterval; $i++) {
+//
+//                $now = date("M d Y h:ia", mktime(0, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+//                $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
+//                echo "<span $attr></span>";
+//            }
         }
 
     }
