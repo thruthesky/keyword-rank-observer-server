@@ -87,9 +87,11 @@ function prepareGraph($rows, $target_name = null)
         if (!isset($res[$title]['names'])) $res[$title]['names'] = [];
         if (!in_array($name, $res[$title]['names'])) array_push($res[$title]['names'], $name);
 
+
         if (!isset($res[$title]['dates'][$date])) $res[$title]['dates'][$date] = [];
         if ($err_count) $res[$title]['dates'][$date][$time] = false;
         $res[$title]['dates'][$date][$time] = true;
+        
 
 ////		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
 //		$res[ $title ][ $name ][] = $data;
