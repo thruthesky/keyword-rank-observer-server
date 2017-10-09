@@ -98,11 +98,17 @@ function prepareGraph($rows, $target_name = null)
 //		$res[ $title ][ $name ][] = $data;
     }
 //
-//	echo "<pre>";
-//	print_r($res);
-//	exit;
+	echo "<pre>";
+	print_r($res);
+	exit;
 
     return $res;
 
+
+
+//    [0] => 0801
+//    [1] => 0806
+//    [2] => 0811
+//    [3] => 0816
 
 }
