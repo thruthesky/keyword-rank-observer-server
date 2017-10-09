@@ -73,67 +73,24 @@ function prepareGraph($rows, $target_name = null)
 
 
 
-		if ( ! isset($res[$title]) ) $res[$title] = [ 'rank' => $row->rank, 'keyword' => $keyword ];
+		if ( ! isset($res[$title]) ) $res[$title] = [ 'rank' => $row->rank, 'keyword' => $keyword , 'dates' => [] ];
 		if ( ! isset( $res[$title][ 'names' ] ) ) $res[$title][ 'names' ] = [];
 		if ( !in_array($name, $res[$title]['names']) ) array_push($res[$title]['names'], $name);
 
-		if ( ! isset($res[$title][$date]) ) $res[$title][$date] = [];
-		$res[$title][$date][] = $time;
 
-
-
-
-
-//		$data = [
-//			'date' => $row->date,
-//			'time' => $row->time,
-//			'keyword' => $row->keyword
-//		];
-//		$res[$title]['data'][$date][$time] = $keyword;
-
+		if ( ! isset($res[$title]['dates'][$date]) ) $res[$title]['dates'][$date] = [];
+		$res[$title]['dates'][$date][] = $time;
+		
 
 ////		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
 //		$res[ $title ][ $name ][] = $data;
-
-
 	}
-
-	echo "<pre>";
-	print_r($res);
-	exit;
+//
+//	echo "<pre>";
+//	print_r($res);
+//	exit;
 
 	return $res;
 
 
-
-//    $titles = [];
-//    $graphs = [];
-//    foreach ($rows as $row) {
-////        print_r(strpos($row->name, $name));
-//        if ( $name && strpos($row->name, $name) !== 0 ) continue;
-//
-//        $title = $row->title;
-//        if (!in_array($title, $titles)) {
-//            $titles[] = $title;
-//        }
-//
-//        $index = array_search($title, $titles);
-//
-//        $data = [
-//            'rank' => $row->rank,
-//            'date' => $row->date,
-//            'time' => $row->time,
-//            'keyword' => $row->keyword,
-//            'name' => $row->name
-//        ];
-//
-//
-//        $graphs[$index]['data'][] = $data;
-//        if(empty($graphs[$index]['title'])) $graphs[$index]['title'] = $title;
-//        if(empty($graphs[$index]['names']) || !in_array($row->name,$graphs[$index]['names'])) $graphs[$index]['names'][] = $row->name;
-//    }
-//
-//
-//
-//    return $graphs;
 }
