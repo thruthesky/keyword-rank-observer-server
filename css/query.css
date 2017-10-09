@@ -53,7 +53,7 @@
 
 .statisticGraph .bar span {
     display: inline-block;
-    width: 5px;
+    width: 1px;
     white-space: normal;
     /*border: 1px black solid;*/
 }
