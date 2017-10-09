@@ -1,3 +1,7 @@
+<?php
+if ( isset($_REQUEST['keywords']) ) setcookie("keywords", $_REQUEST['keywords'], time() + 365 * 24 * 60 * 60 );
+if (isset($_REQUEST['names']) ) setcookie("names", $_REQUEST['names'], time() + 365 * 24 * 60 * 60 );
+?>
 <!doctype html>
 <html>
 <head>
@@ -8,7 +12,22 @@
 <?php
 include 'db.php';
 include 'function.php';
+?>
+<h2>
+<a href="?mode=">Keyword Rank Statistics</a>
+<a href="?mode=monitoring">Realtime Keyword Monitoring</a>
+</h2>
+<?php
+	$date = date('Ymd');
+	$time = date('Hi', time() - 10 * 60 );
+$q = "SELECT keyword FROM keyword_ranks WHERE `date`='$date' AND `time`>'$time' GROUP BY keyword";
+$rows = $db->get_results( $q, ARRAY_N );
+?>
+Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 
+<?php
+
+if ( $_REQUEST['mode'] == 'monitoring' ) require 'monitoring.php';
 
 $colors = ['lightgreen', 'blue', 'violet', 'yellow', 'orange', 'red', 'black'];
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -66,7 +85,7 @@ else {
 //    if ($name) $where .= " AND `name` LIKE '$name%'";
 
     $q = "SELECT idx, platform, keyword, `date`, `time`, `name`, title, `type`, `rank` FROM keyword_ranks WHERE $where";
-    print_r("$q<br>");
+    //print_r("$q<br>");
 
 
     $rows = $db->get_results($q);
@@ -76,7 +95,6 @@ else {
 
 ?>
 
-<h2>Keyword Rank Statistics</h2>
 <form method="GET">
     <nav class="searchOption list">
         <ul>
