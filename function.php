@@ -61,36 +61,54 @@ function getMinute($time)
 function prepareGraph($rows, $target_name = null)
 {
 
-	$res = [];
-	foreach ( $rows as $row ) {
-		if ( $target_name && strpos($row->name, $target_name) !== 0 ) continue;
+    $res = [];
+    $prev_time = null;
+    foreach ($rows as $row) {
 
-		$title = $row->title;
-		$name = $row->name;
-		$date = $row->date;
-		$time = $row->time;
-		$keyword = $row->keyword;
+        $time = $row->time;
+        if (!$prev_time) $prev_time = $time;
+        $timeInterval = $time - $prev_time;
+        if (($timeInterval ) > 6 && $timeInterval < 45 ) {
+            $err_count = true;
+        } else {
+            $err_count = false;
+        }
+        $prev_time = $time;
+
+        if ($target_name && strpos($row->name, $target_name) !== 0) continue;
+
+        $title = $row->title;
+        $name = $row->name;
+        $date = $row->date;
+        $keyword = $row->keyword;
 
 
+        if (!isset($res[$title])) $res[$title] = ['rank' => $row->rank, 'keyword' => $keyword, 'dates' => []];
+        if (!isset($res[$title]['names'])) $res[$title]['names'] = [];
+        if (!in_array($name, $res[$title]['names'])) array_push($res[$title]['names'], $name);
 
-		if ( ! isset($res[$title]) ) $res[$title] = [ 'rank' => $row->rank, 'keyword' => $keyword , 'dates' => [] ];
-		if ( ! isset( $res[$title][ 'names' ] ) ) $res[$title][ 'names' ] = [];
-		if ( !in_array($name, $res[$title]['names']) ) array_push($res[$title]['names'], $name);
 
-
-		if ( ! isset($res[$title]['dates'][$date]) ) $res[$title]['dates'][$date] = [];
-		$res[$title]['dates'][$date][] = $time;
-
+        if (!isset($res[$title]['dates'][$date])) $res[$title]['dates'][$date] = [];
+        if ($err_count) $res[$title]['dates'][$date][$time] = false;
+        $res[$title]['dates'][$date][$time] = true;
+        
 
 ////		if ( count($res[$title][$name]) > 10 ) continue; // TEST CODe
 //		$res[ $title ][ $name ][] = $data;
-	}
+    }
 //
 //	echo "<pre>";
 //	print_r($res);
 //	exit;
 
-	return $res;
+    return $res;
 
-
+//
+//    [0] => 0926
+//    [1] => 0931
+//    [2] => 0936
+//    [3] => 0941
+//    [4] => 0946
+//    [5] => 0951
+//    [6] => 0956
 }

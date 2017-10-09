@@ -4,10 +4,12 @@
     padding: 0;
     border: 1px darkgrey solid;
 }
+
 .statisticGraph .bar {
     overflow-x: auto;
     overflow-y: hidden;
 }
+
 .statisticGraph .bar .day {
     position: relative;
     display: table-cell;
@@ -17,13 +19,14 @@
 }
 
 .statisticGraph .bar .day .indicator {
-     position: absolute;
-    top:0;
-     font-size: 16px;
-     width: 100%;
-     text-align: center;
-     /* text-align: center; */
- }
+    position: absolute;
+    top: 0;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+    white-space: normal;
+    word-wrap: break-word;
+}
 
 .statisticGraph .bar .day .rightArrow {
     position: absolute;
@@ -50,11 +53,10 @@
 
 .statisticGraph .bar span {
     display: inline-block;
-    width: 3px;
+    width: 1px;
     white-space: normal;
     /*border: 1px black solid;*/
 }
-
 
 .legend {
     display: inline-block;
@@ -92,17 +94,7 @@
     float: left;
     padding: 5px;
 }
-.statisticGraph .daily-container {
 
-}
-
-.statisticGraph .daily-note {
-    position: absolute;
-    bottom: -20px;
-    margin: 0 auto;
-    width: 100%;
-    text-align: center;
-}
 
 
 
