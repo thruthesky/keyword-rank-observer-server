@@ -1,3 +1,9 @@
+<meta http-equiv="refresh" content="30">
+<script>
+	setTimeout( function() {
+		location.reload();
+	}, 60 * 1000 );
+</script>
 <style>
 	body {
 		font-size: 9pt;

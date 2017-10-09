@@ -27,7 +27,7 @@ Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 
 <?php
 
-if ( isset($_REQUESET['mode']) && $_REQUEST['mode'] == 'monitoring' ) require 'monitoring.php';
+if ( isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'monitoring' ) require 'monitoring.php';
 
 $colors = ['lightgreen', 'blue', 'violet', 'yellow', 'orange', 'red', 'black'];
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
