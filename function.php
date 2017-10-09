@@ -79,7 +79,7 @@ function prepareGraph($rows, $target_name = null)
 
 		if ( ! isset($res[$title][$date]) ) $res[$title][$date] = [];
 		$res[$title][$date][] = $time;
-		
+
 
 
 
