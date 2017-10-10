@@ -197,10 +197,11 @@ $npTop = $dHeight - $npHeight;
 if (!empty($graphs)) {
 
     foreach ($graphs as $title => $graph) {
+
         $header = "$title. " . implode(',', $graph['names']);
         echo "<h3>$header</h3>";
 
-        if (!empty($graph['dates'])) {
+
             $y = 0;
             $m = 0;
             $d = 0;
@@ -296,9 +297,9 @@ if (!empty($graphs)) {
             }
             echo "</div>";
             echo "</div>";
+
         }
 
-    }
 }
 else {
     echo "<h3>\"NO RECORD FOUND SERVER MIGHT BE DOWN. TRY CHOOSING EARLIER DATE\"</h3>";
