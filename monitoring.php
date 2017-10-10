@@ -7,6 +7,7 @@
 <style>
 	body {
 		font-size: 9pt;
+        font-family: "Malgun Gothic", "Gulim", sans-serif;
 	}
 	span {
 		display: inline-block;
@@ -85,7 +86,9 @@ Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 
 //echo count($rows);
 
-	if ( ! $rows ) return;
+	if ( ! $rows ) {
+	    echo "<h3>No data found on the server</h3>";
+    }
 
 	$data = [];
 	$names = [];
@@ -97,8 +100,7 @@ Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 		
 	}
 
-//echo "<pre>";
-//print_r($data);
+
 ?>
 
 
