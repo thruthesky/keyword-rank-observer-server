@@ -11,7 +11,7 @@ include_once "ezSQL/mysqli/ez_sql_mysqli.php";
 
 
 
-$db = new ezSQL_mysqli( $db_user, $db_password, $db_name,'localhost');
+$db = new ezSQL_mysqli( $db_user, $db_password, $db_name,'www.sonub.com');
 
 $db->query("SET CHARACTER SET utf8");
 $db->query("set session character_set_connection=utf8;");
