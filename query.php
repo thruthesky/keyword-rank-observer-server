@@ -159,6 +159,7 @@ else {
                             ?>
                             <option value="<?php echo $hr ?>" <?php if ($hr == $hourEnd) echo ' selected' ?>><?php echo showTime($i) ?></option>
                         <?php } ?>
+                        <option value="2359" <?php if ('2359' == $hourEnd) echo ' selected' ?>>11:59pm</option>
                     </select>
                 </div>
             </li>
