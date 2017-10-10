@@ -1,3 +1,7 @@
+<?php
+if ( isset($_REQUEST['keywords']) ) setcookie("keywords", $_REQUEST['keywords'], time() + 365 * 24 * 60 * 60 );
+if (isset($_REQUEST['names']) ) setcookie("names", $_REQUEST['names'], time() + 365 * 24 * 60 * 60 );
+?>
 <!doctype html>
 <html>
 <head>
@@ -8,7 +12,22 @@
 <?php
 include 'db.php';
 include 'function.php';
+?>
+<h2>
+<a href="?mode=">Keyword Rank Statistics</a>
+<a href="?mode=monitoring">Realtime Keyword Monitoring</a>
+</h2>
+<?php
+	$date = date('Ymd');
+	$time = date('Hi', time() - 10 * 60 );
+$q = "SELECT keyword FROM keyword_ranks WHERE `date`='$date' AND `time`>'$time' GROUP BY keyword";
+$rows = $db->get_results( $q, ARRAY_N );
+?>
+Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 
+<?php
+
+if ( isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'monitoring' ) require 'monitoring.php';
 
 $colors = ['lightgreen', 'blue', 'violet', 'yellow', 'orange', 'red', 'black'];
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -40,8 +59,10 @@ if ($dayStart > $daysInMonthStart) $dayStart = $daysInMonthStart;
 if ($dayEnd > $daysInMonthEnd) $dayEnd = $daysInMonthEnd;
 
 $keyword = in('keyword');
-$platform = in('platform');
+//$platform = in('platform');
 $name = in('name');
+$desktop = in('desktop');
+$mobile = in('mobile');
 
 
 $dateStart = strtotime("$yearStart-$monthStart-$dayStart " . getHour($hourStart) . ':' . getMinute($hourStart));
@@ -54,11 +75,17 @@ else {
     $where .= " AND (`date` BETWEEN $yearStart$monthStart$dayStart AND $yearEnd$monthEnd$dayEnd)";
     if ($hourStart <= $hourEnd) $where .= " AND (`time` BETWEEN $hourStart AND $hourEnd)";
     if ($keyword) $where .= " AND keyword = '$keyword'";
-    if ($platform) $where .= " AND platform = '$platform'";
+
+    if ($desktop != $mobile) {
+        if ($desktop) {
+            $where .= " AND platform = 'desktop'";
+        } else $where .= " AND platform = 'mobile'";
+    }
+//    if ($platform) $where .= " AND platform = '$platform'";
 //    if ($name) $where .= " AND `name` LIKE '$name%'";
 
     $q = "SELECT idx, platform, keyword, `date`, `time`, `name`, title, `type`, `rank` FROM keyword_ranks WHERE $where";
-    print_r("$q<br>");
+    //print_r("$q<br>");
 
 
     $rows = $db->get_results($q);
@@ -68,7 +95,6 @@ else {
 
 ?>
 
-<h2>Keyword Rank Statistics</h2>
 <form method="GET">
     <nav class="searchOption list">
         <ul>
@@ -142,10 +168,15 @@ else {
             <li>
                 Platform
                 <div>
-                    <select name="platform">
-                        <option value="desktop" <?php if ($platform == 'desktop') echo ' selected' ?>>Desktop</option>
-                        <option value="mobile" <?php if ($platform == 'mobile') echo ' selected' ?>>Mobile</option>
-                    </select>
+                    <label for="desktop">Desktop
+                        <input id="desktop" type="checkbox"
+                               name="desktop" <?php if ($desktop == 'on') echo ' checked' ?>
+                               onchange="this.form.submit()">
+                    </label>
+                    <label for="mobile">Mobile
+                        <input id="mobile" type="checkbox" name="mobile" <?php if ($mobile == 'on') echo ' checked' ?>
+                               onchange="this.form.submit()"
+                    </label>
                 </div>
             </li>
             <li>
@@ -195,11 +226,22 @@ $npHeight = 20;
 $npTop = $dHeight - $npHeight;
 
 if (!empty($graphs)) {
+//        echo "<pre>";
+//        print_r($graphs); exit;
+    foreach ($graphs as $title => $platforms) {
+        if (empty($platforms)) continue;
+//
+//        echo "<pre>";
+//        print_r($platforms); exit;
 
-    foreach ($graphs as $title => $graph) {
+        foreach ($platforms['platform'] as $platform => $graph) {
 
-        $header = "$title. " . implode(',', $graph['names']);
-        echo "<h3>$header</h3>";
+//            echo "<pre>";
+//            print_r($graph);
+            $names = '';
+            if(!empty($graph['names'] ) )$names =  implode(',', $graph['names']);
+            $header = "$platform - $title. " . $names;
+            echo "<h3>$header</h3>";
 
 
             $y = 0;
@@ -219,12 +261,15 @@ if (!empty($graphs)) {
                     $minutes = getMinute($hourStart);
                     for ($in = 0; $in < $dInterval; $in++) {
                         $ctime = date("Hi", mktime($hour, $minutes + $in * 5, 0));
-                        $graph['dates'][$dates][$ctime] = false;
+                        $graph['dates'][$dates][$ctime] = [
+                            'status' => false,
+                            'rank' => 7
+                        ];
                     }
                 }
             }
             ksort($graph['dates'], 1);
-
+//
 //            echo "<pre>";
 //            print_r($graph['dates']);
 //            exit;
@@ -241,7 +286,9 @@ if (!empty($graphs)) {
                 echo "<div class='indicator'><span class='leftArrow'></span>$indicator<span class='rightArrow'></span></div>";
 
 
-                foreach ($times as $time => $status) {
+                foreach ($times as $time => $re) {
+
+
                     $h = getHour($time);
                     $min = getMinute($time);
                     $currentDate = date("M d Y", mktime($h, $min, 0, $m, $d, $y));
@@ -252,30 +299,30 @@ if (!empty($graphs)) {
                      * Red lines from start and in between
                      */
                     for ($i = 1; $i < $dateInterval; $i++) {
-                        $currentTime = date("Hi", mktime($h, $min + ($i -1) * 5, 0));
+                        $currentTime = date("Hi", mktime($h, $min + ($i - 1) * 5, 0));
+
+                        print_r("$currentTime = $time");
                         if ((int)$currentTime > (int)$hourEnd) break;
                         if ((int)$currentTime < (int)$hourStart) continue;
-                        $now = date("M d Y h:ia", mktime($h, $i * 5, 0, $monthStart, $dayStart, $yearStart));
+                        $now = date("M d Y h:ia", mktime($h, $min + ($i - 1) * 5, 0, $monthStart, $dayStart, $yearStart));
                         $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[5];' title='$now'";
                         echo "<span $attr></span>";
                     }
 
-
-                    $rank = $graph['rank'];
+                    $rank = $re['rank'];
                     $info = 'Rank: ' . $rank
-                        . ' Keyword: ' . $graph['keyword'] . ', '
+                        . ' Keyword: ' . $platforms['keyword'] . ', '
                         . ' Name: ' . $name . ', '
                         . $currentDate . ' ' . showTime($time);
                     $height = (6 - $rank) * ($dHeight / 5);
                     $top = $dHeight - $height;
                     $color = $colors[(int)$rank - 1];
 
-                    if ($status) {
+                    if ($re['status']) {
                         $data = "style='height:$height" . "px; margin-top:$top" . "px; background-color: $color;' title='$info'";
                     } else {
                         $data = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[6];' title='$info'";
                     }
-
                     echo "<span $data></span>";
                     $dateStart = $dateEnd;
 
@@ -288,11 +335,13 @@ if (!empty($graphs)) {
                  */
                 for ($i = 1; $i < $dateInterval; $i++) {
                     $currentTime = date("Hi", mktime($h, $min + $i * 5, 0));
-                    if ($currentTime < $hourStart || $currentTime > $hourEnd || $currentTime == '2400' ) continue;
+                    if ($currentTime < $hourStart || $currentTime > $hourEnd || $currentTime == '2400') continue;
                     $now = date("M d Y h:ia", mktime($h, ($i * 5) + $min, 0, $m, $d, $y));
                     $attr = "style='height:$npHeight" . "px; margin-top:$npTop" . "px; background-color: $colors[6];' title='$now'";
                     echo "<span $attr></span>";
                 }
+
+
                 echo "</div>";
             }
             echo "</div>";
@@ -300,11 +349,13 @@ if (!empty($graphs)) {
 
         }
 
-}
-else {
+
+    }
+
+} else {
+
     echo "<h3>\"NO RECORD FOUND SERVER MIGHT BE DOWN. TRY CHOOSING EARLIER DATE\"</h3>";
 }
-
 
 
 ?>
