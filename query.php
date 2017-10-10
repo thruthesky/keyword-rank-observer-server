@@ -261,8 +261,8 @@ if (!empty($graphs)) {
 //            print_r($graph);
             $names = '';
             if(!empty($graph['names'] ) )$names =  implode(',', $graph['names']);
-            $header = "$platform - $title. " . $names;
-            echo "<h3>$header</h3>";
+            $header = "$platform - Keyword: $platforms[keyword], Title: $title. " . $names;
+            echo "<h4>$header</h4>";
 
 
             $y = 0;
