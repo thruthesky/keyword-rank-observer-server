@@ -45,7 +45,7 @@ include 'function.php';
 
 if ( isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'monitoring' ) require 'monitoring.php';
 
-$colors = ['lightgreen', 'blue', 'violet', 'yellow', 'orange', 'red', 'black'];
+$colors = ['red', 'lightgreen', 'blue', 'violet', 'yellow', 'grey',  'black'];
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 $hourStart = '0000';
 $hourEnd = '2400';
@@ -95,7 +95,10 @@ else {
     if ($desktop != $mobile) {
         if ($desktop) {
             $where .= " AND platform = 'desktop'";
-        } else $where .= " AND platform = 'mobile'";
+        } else $where .= " AND (platform = 'mobile' AND `type`='kin')";
+    }
+    else {
+        $where .= " AND (platform = 'desktop' OR (platform = 'mobile' AND `type`='kin'))";
     }
 //    if ($platform) $where .= " AND platform = '$platform'";
 //    if ($name) $where .= " AND `name` LIKE '$name%'";
