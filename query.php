@@ -261,7 +261,7 @@ if (!empty($graphs)) {
 //            print_r($graph);
             $names = '';
             if(!empty($graph['names'] ) )$names =  implode(',', $graph['names']);
-            $header = "$platform - Keyword: $platforms[keyword], Title: $title. " . $names;
+            $header = "$platform - ($platforms[keyword]) Title: $title. " . $names;
             echo "<h4>$header</h4>";
 
 
