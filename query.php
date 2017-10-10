@@ -171,11 +171,12 @@ else {
                     </select>
                     <select name="hourEnd" onchange="this.form.submit()">
                         <?php
-                        for ($i = 1; $i <= 24; $i++) {
+                        for ($i = 1; $i <= 23; $i++) {
                             $hr = add0($i, '00');
                             ?>
                             <option value="<?php echo $hr ?>" <?php if ($hr == $hourEnd) echo ' selected' ?>><?php echo showTime($i) ?></option>
                         <?php } ?>
+                        <option value="2359" <?php if ('2359' == $hourEnd) echo ' selected' ?>>11:59pm</option>
                     </select>
                 </div>
             </li>
@@ -260,8 +261,8 @@ if (!empty($graphs)) {
 //            print_r($graph);
             $names = '';
             if(!empty($graph['names'] ) )$names =  implode(',', $graph['names']);
-            $header = "$platform - $title. " . $names;
-            echo "<h3>$header</h3>";
+            $header = "$platform - ($platforms[keyword]) Title: $title. " . $names;
+            echo "<h4>$header</h4>";
 
 
             $y = 0;
