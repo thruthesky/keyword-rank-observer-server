@@ -9,11 +9,10 @@
 		font-size: 9pt;
         font-family: "Malgun Gothic", "Gulim", sans-serif;
 	}
-	span {
+	.rank span {
 		display: inline-block;
 		margin: 0 4px;
 		background-color: #ddd;
-		border-radious: 3px;
 	}
 	b[idx] {
 		padding: 2px 3px;
@@ -34,33 +33,37 @@
 		background-color:#444;
 		color: white;
 	}
+    .fs-normal { font-weight: 100; }
+    .rank { margin-bottom: .25em; }
 </style>
 <form>
 <input type="hidden" name="mode" value="monitoring">
 <?php
-	$keywords = '';
+	$keywords = $selectable_keywords;
 	$_names = '';
 	if ( isset($_REQUEST['keywords']) ) $keywords = $_REQUEST['keywords'];
 	else if ( isset($_COOKIE['keywords']) ) $keywords = $_COOKIE['keywords'];
+
 	if ( isset($_REQUEST['names']) ) $_names = $_REQUEST['names'];
 	else if ( isset($_COOKIE['names']) ) $_names = $_COOKIE['names'];
 
+
 ?>
-Keywords: <input name="keywords" size="50" value="<?php echo $keywords?>">
-Names: <input name="names" size="40" value="<?php echo $_names?>">
+키워드: <input name="keywords" size="50" value="<?php echo $keywords?>"> <a href="javascript:alert('모니터링 할 키워드를 입력하세요. 키워드는 지정한 순서대로 나타납니다. 콤마로 여러개 입력 가능. 모든 키워드를 선택하고 싶다면, 키워드를 공백으로 하고, 전송하세요.');">(?)</a>
+    이름: <input name="names" size="40" value="<?php echo $_names?>"> <a href="javascript:alert('강조 표시 할 이름을 입력하세요. 콤마로 여러개 입력 가능.');">(?)</a>
 <input type="submit" value="Submit">
 </form>
 <?php
 
-
-	$q_keywords = '';
-	if ( $keywords ) {
-		$conds = [];
-		foreach ( explode(',', $keywords) as $key ) {
-			$conds[] = "keyword='$key'";
-		}
-		$q_keywords = ' AND (' . implode(' OR ', $conds) . ')';
-	}
+//
+//	$q_keywords = '';
+//	if ( $keywords ) {
+//		$conds = [];
+//		foreach ( explode(',', $keywords) as $key ) {
+//			$conds[] = "keyword='$key'";
+//		}
+//		$q_keywords = ' AND (' . implode(' OR ', $conds) . ')';
+//	}
 
 	$q_names = [];
 	if ( $_names ) {
@@ -72,33 +75,30 @@ Names: <input name="names" size="40" value="<?php echo $_names?>">
 
 
 
+//
+//
+//	$date = date('Ymd');
+//	$time = date('Hi', time() - 10 * 60 );
+//    $q = "SELECT * FROM keyword_ranks WHERE `date`='$date' AND `time`>='$time' $q_keywords";
+//    $rows = $db->get_results($q, ARRAY_A);
 
-	$date = date('Ymd');
-	$time = date('Hi', time() - 10 * 60 );
-$q = "SELECT keyword FROM keyword_ranks WHERE `date`='$date' AND `time`>'$time' GROUP BY keyword";
-$rows = $db->get_results( $q, ARRAY_N );
-?>
-Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
-
-<?php
-    $q = "SELECT * FROM keyword_ranks WHERE `date`='$date' AND `time`>='$time' $q_keywords";
-    $rows = $db->get_results($q, ARRAY_A);
-
+//    echo $q;
 //echo count($rows);
-
-	if ( ! $rows ) {
-	    echo "<h3>No data found on the server</h3>";
-    }
-
-	$data = [];
-	$names = [];
-	foreach( $rows as $row ) {
-		$data[ $row['platform'] ][ $row['keyword'] ][ $row['rank'] ] = $row;
-		$key = $row['platform'] . $row['keyword'] . $row['rank'];
-		if ( ! isset( $names[ $key ] ) ) $names[ $key ] = [];
-		if ( ! in_array( $row['name'], $names[ $key ] ) ) $names[ $key ][] = $row['name'];
-		
-	}
+//
+//	if ( ! $rows ) {
+//	    echo "<h3>No data found on the server</h3>";
+//	    exit;
+//    }
+//
+//	$data = [];
+//	$names = [];
+//	foreach( $rows as $row ) {
+//		$data[ $row['platform'] ][ $row['keyword'] ][ $row['rank'] ] = $row;
+//		$key = $row['platform'] . $row['keyword'] . $row['rank'];
+//		if ( ! isset( $names[ $key ] ) ) $names[ $key ] = [];
+//		if ( ! in_array( $row['name'], $names[ $key ] ) ) $names[ $key ][] = $row['name'];
+//
+//	}
 
 
 ?>
@@ -106,68 +106,26 @@ Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 
 <table>
 	<tr>
-		<td><h1>Desktop</h1></td>
-		<td><h1>Mobile</h1></td>
+		<td><h1>데스크톱</h1></td>
+		<td><h1>모바일</h1></td>
 	</tr>
 	<tr valign="top">
 		<td>
-	
 			<?php
-				if ( isset($data['desktop']) ) {
-					foreach( $data['desktop'] as $keyword => $rows ) {
-						$date = date("Y/m/d H:i a", ymdhis($rows[1]['date']. $rows[1]['time'] ."00"));
-?>
-<h2><?php echo $keyword . "$date"?></h2>
-<?php
-						for( $i = 0; $i < count($rows); $i ++ ) {
-							$row = $rows[$i+1];
-?>
-<div>
-(<?php echo $row['rank']?>) <?php echo $row['title']?>
-<?php foreach( $names[ 'desktop' . $keyword . $row['rank'] ] as $name ) {
-	$idx = array_search( $name, $q_names );
-	if ( $idx !== false ) $name = "<b idx=$idx>$name</b>";
-	echo "<span>$name</span>";
-}?>
-</div>
-<?php
-						}
-					}
-				}
-?>
+			$ks = explode(',', $keywords);
+			foreach( $ks as $k ) {
+				showKeywords('desktop', $k);
+            }
+            ?>
 		</td>
+        <td>
+		<?php
+		$ks = explode(',', $keywords);
+		foreach( $ks as $k ) {
+			showKeywords('mobile', $k);
+		}
+		?>
 
-
-
-
-
-
-
-		<td>
-	
-			<?php
-				if ( isset($data['mobile']) ) {
-					foreach( $data['mobile'] as $keyword => $rows ) {
-						$date = date("Y/md H:i a", ymdhis($rows[1]['date']. $rows[1]['time'] ."00"));
-?>
-<h2><?php echo $keyword . "$date"?></h2>
-<?php
-						for( $i = 0; $i < count($rows); $i ++ ) {
-							$row = $rows[$i+1];
-?>
-<div>
-(<?php echo $row['rank']?>) <?php echo $row['title']?>
-<?php foreach( $names[ 'mobile' . $keyword . $row['rank'] ] as $name ) {
-	$idx = array_search( $name, $q_names );
-	if ( $idx !== false ) $name = "<b idx=$idx>$name</b>";
-	echo "<span>$name</span>";
-}?>
-</div>
-<?php
-						}
-					}
-				}
-?>
 		</td>
 
 	</tr>
@@ -176,6 +134,51 @@ Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
 
 
 <?php
+
+function showKeywords( $platform, $keyword ) {
+    global $db, $q_names;
+	$date = date('Ymd');
+	$time = date('Hi', time() - 10 * 60 );
+	$q = "SELECT * FROM keyword_ranks WHERE platform='$platform' AND keyword='$keyword' AND `date`='$date' AND `time`>='$time' ORDER BY `idx` ASC";
+	$rows = $db->get_results($q, ARRAY_A);
+	if ( ! $rows ) return;
+	$ranks = [];
+	$names = [];
+	foreach( $rows as $row ) {
+	    $rank = $row['rank'];
+	    $name = $row['name'];
+	    $ranks[ $rank ] = $row;
+	    if ( ! isset( $names[ $rank ] ) ) $names[ $rank ] = [];
+	    if ( ! in_array( $name, $names[ $rank ] ) ) $names[ $rank ][] = $name;
+    }
+
+
+
+    $dt = "Time error";
+	if ( $ranks['1'] ) $dt = date("Y/md H:i a", ymdhis( $ranks['1']['date'] . $ranks['1']['time'] . "00" ));
+
+    echo "<h2> $keyword <span class='fs-normal'>$dt</span></h2>";
+    for ( $i = 1; $i <= 20; $i ++ ) {
+	    if ( ! isset($ranks[$i]) ) continue;
+	    $row = $ranks[$i];
+	    echo "
+            <div class='rank'>
+            ($row[rank])
+            $row[title]
+            ";
+	    foreach( $names[ $row['rank'] ] as $name ) {
+		    $idx = array_search( $name, $q_names );
+		    if ( $idx !== false ) {
+			    $name = "<b idx=$idx>$name</b>";
+		    }
+		    echo "<span>$name</span>";
+	    }
+
+	    echo "
+            </div>
+            ";
+    }
+}
 
 
 function ymdhis( $datetime ) {

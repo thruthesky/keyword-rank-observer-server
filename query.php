@@ -7,6 +7,17 @@ if (isset($_REQUEST['names']) ) setcookie("names", $_REQUEST['names'], time() + 
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="css/query.css">
+    <style>
+        .selectable-keywords {
+            margin-bottom: .5em;
+            padding: 1em;
+            background-color: #eee;
+        }
+        .selectable-keywords .caption {
+            margin-right: 1em;
+            color: #003366;
+        }
+    </style>
 </head>
 <body>
 <?php
@@ -18,12 +29,18 @@ include 'function.php';
 <a href="?mode=monitoring">Realtime Keyword Monitoring</a>
 </h2>
 <?php
+    date_default_timezone_set('UTC');
 	$date = date('Ymd');
 	$time = date('Hi', time() - 10 * 60 );
-$q = "SELECT keyword FROM keyword_ranks WHERE `date`='$date' AND `time`>'$time' GROUP BY keyword";
-$rows = $db->get_results( $q, ARRAY_N );
+    $q = "SELECT keyword FROM keyword_ranks WHERE `date`='$date' AND `time`>'$time' GROUP BY keyword";
+    $rows = $db->get_results( $q, ARRAY_N );
+    $ks = [];
+    foreach( $rows as $row ) $ks[] = $row[0];
+    $selectable_keywords = implode( ',', $ks );
 ?>
-Selectable Keywords: <?php foreach( $rows as $row ) echo $row[0] . ', ' ?>
+<div class="selectable-keywords">
+    <span class="caption">선택 가능한 키워드</span><span class="text"><?php echo $selectable_keywords ?></span>
+</div>
 
 <?php
 
