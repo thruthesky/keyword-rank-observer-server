@@ -43,12 +43,13 @@
 	$_names = '';
 	if ( isset($_REQUEST['keywords']) ) $keywords = $_REQUEST['keywords'];
 	else if ( isset($_COOKIE['keywords']) ) $keywords = $_COOKIE['keywords'];
+
 	if ( isset($_REQUEST['names']) ) $_names = $_REQUEST['names'];
 	else if ( isset($_COOKIE['names']) ) $_names = $_COOKIE['names'];
 
 
 ?>
-키워드: <input name="keywords" size="50" value="<?php echo $keywords?>"> <a href="javascript:alert('모니터링 할 키워드를 입력하세요. 키워드는 지정한 순서대로 나타납니다. 콤마로 여러개 입력 가능.');">(?)</a>
+키워드: <input name="keywords" size="50" value="<?php echo $keywords?>"> <a href="javascript:alert('모니터링 할 키워드를 입력하세요. 키워드는 지정한 순서대로 나타납니다. 콤마로 여러개 입력 가능. 모든 키워드를 선택하고 싶다면, 키워드를 공백으로 하고, 전송하세요.');">(?)</a>
     이름: <input name="names" size="40" value="<?php echo $_names?>"> <a href="javascript:alert('강조 표시 할 이름을 입력하세요. 콤마로 여러개 입력 가능.');">(?)</a>
 <input type="submit" value="Submit">
 </form>

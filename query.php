@@ -14,6 +14,7 @@ if (isset($_REQUEST['names']) ) setcookie("names", $_REQUEST['names'], time() + 
             background-color: #eee;
         }
         .selectable-keywords .caption {
+            margin-right: 1em;
             color: #003366;
         }
     </style>
