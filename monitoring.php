@@ -35,6 +35,7 @@
 	}
     .fs-normal { font-weight: 100; }
     .rank { margin-bottom: .25em; }
+    .blog { color: #eee; }
 </style>
 <form>
 <input type="hidden" name="mode" value="monitoring">
@@ -157,12 +158,18 @@ function showKeywords( $platform, $keyword ) {
     $dt = "Time error";
 	if ( $ranks['1'] ) $dt = date("Y/md H:i a", ymdhis( $ranks['1']['date'] . $ranks['1']['time'] . "00" ));
 
-    echo "<h2> $keyword <span class='fs-normal'>$dt</span></h2>";
+	if ( $platform == 'mobile' ) $m = 'm.';
+	else $m = '';
+    echo "<h2> <a target='_blank' href='https://{$m}search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=$keyword'>$keyword</a> <span class='fs-normal'>$dt</span></h2>";
     for ( $i = 1; $i <= 20; $i ++ ) {
 	    if ( ! isset($ranks[$i]) ) continue;
+	    $type = $ranks[$i]['type'];
 	    $row = $ranks[$i];
+	    if ( $type == 'blog' ) $type_display = "[블로그]";
+	    else $type_display = "";
 	    echo "
-            <div class='rank'>
+            <div class='rank $type'>
+            $type_display
             ($row[rank])
             $row[title]
             ";
