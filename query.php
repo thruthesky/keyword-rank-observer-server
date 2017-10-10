@@ -171,7 +171,7 @@ else {
                     </select>
                     <select name="hourEnd" onchange="this.form.submit()">
                         <?php
-                        for ($i = 1; $i <= 24; $i++) {
+                        for ($i = 1; $i <= 23; $i++) {
                             $hr = add0($i, '00');
                             ?>
                             <option value="<?php echo $hr ?>" <?php if ($hr == $hourEnd) echo ' selected' ?>><?php echo showTime($i) ?></option>
