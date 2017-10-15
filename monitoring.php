@@ -104,7 +104,7 @@
 
 ?>
 
-
+<div class="mt-3">
 <table>
 	<tr>
 		<td><h1>데스크톱</h1></td>
@@ -131,6 +131,7 @@
 
 	</tr>
 </table>
+</div>
 
 
 
@@ -161,7 +162,7 @@ function showKeywords( $platform, $keyword ) {
 
 	if ( $platform == 'mobile' ) $m = 'm.';
 	else $m = '';
-    echo "<h2> <a target='_blank' href='https://{$m}search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=$keyword'>$keyword</a> <span class='fs-normal'>$dt</span></h2>";
+    echo "<h2 class='fs-lg'> <a target='_blank' href='https://{$m}search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=$keyword'>$keyword</a> <span class='fs-normal'>$dt</span></h2>";
     for ( $i = 1; $i <= 20; $i ++ ) {
 	    if ( ! isset($ranks[$i]) ) continue;
 	    $type = $ranks[$i]['type'];
