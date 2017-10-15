@@ -156,7 +156,8 @@ function showKeywords( $platform, $keyword ) {
 
 
     $dt = "Time error";
-	if ( $ranks['1'] ) $dt = date("Y/md H:i a", ymdhis( $ranks['1']['date'] . $ranks['1']['time'] . "00" ));
+	$r1 = current($ranks);
+	if ( $r1) $dt = date("Y/md H:i a", ymdhis( $r1['date'] . $r1['time'] . "00" ));
 
 	if ( $platform == 'mobile' ) $m = 'm.';
 	else $m = '';

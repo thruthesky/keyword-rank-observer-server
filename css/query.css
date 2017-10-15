@@ -100,4 +100,9 @@
 
 
 
-
+.fs-sm {
+    font-size: .825rem!important;
+}
+.fs-md {
+    font-size: 1rem!important;
+}
