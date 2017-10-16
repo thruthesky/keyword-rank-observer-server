@@ -1,92 +1,35 @@
 <?php
-include 'db.php';
+
+?>
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>키워드 모니터링</title>
 
 
-dog($_REQUEST);
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 
-
-
-save_ranks($_REQUEST);
-echo json_encode(['code' => 0]);
-
-
-function save_ranks( $data ) {
-	global $db;
-	if ( empty($data) ) fail('no data');
-	if ( ! is_array($data) ) fail('data is not array');
-
-
-	$keyword = $data['keyword'];
-	$platform = $data['platform'];
-
-
-	for ( $j = 0; $j < count($data['rank']); $j ++ ) {
-		$e = $data['rank'][$j];
-		$rank = $j + 1;
-		if ( isset($e['type'] ) ) $type = $e['type'];
-		else $type = '';
-		if ( $platform == 'desktop' || ( $platform == 'mobile' && $type == 'kin') ) {
-			if ( !isset($e['names']) || empty($e['names']) || ! count($e['names']) ) {
-				fail('no names');
-			}
+	<style>
+		body {
+			font-family: "Malgun Gothic", "Gulim", sans-serif;
 		}
-		else if ( $platform == 'mobile' && $type == 'blog' ) {
-			if ( !isset($e['name']) || empty($e['name']) ) fail('no name on blog');
-			$e['names'] = [ $e['name'] ];
-		}
-		else fail('no platform');
+	</style>
+</head>
+<body>
 
-
-
-		$date = date('Ymd');
-		$time = date('Hi');
-		$title = $db->escape($e['title']);
-		$href = $db->escape($e['href']);
-
-
-		$names = $e['names'];
-		for ( $i = 0; $i < count($names); $i ++ ) {
-			$name = $db->escape($names[$i]);
-			$q = "
-						INSERT INTO keyword_ranks
-								(platform, keyword, `date`, `time`, `name`, `rank`, href, title, `type`)
-						VALUES
-								('$platform', '$keyword', '$date', '$time', '$name', '$rank', '$href', '$title', '$type')
-					";
-//			dog($q);
-			$db->query($q);
-		}
-
-
-	}
-
-
-}
-
-
-
-function fail( $msg ) {
-	echo json_encode(['code' => -1, 'message' => $msg]);
-	exit;
-}
-
-
-
-//$user = $_REQUEST['user'];
-//$message = $_REQUEST['message'];
-//$stamp = time();
-//$db->query("INSERT INTO message (user, message, stamp) VALUES ('$user', '$message', $stamp)") ;
-
-
-function dog( $msg ) {
-	return;
-	if ( is_integer($msg) || is_string($msg) ) {
-
-	}
-	else {
-		ob_start();
-		print_r($msg);
-		$msg = ob_get_clean();
-	}
-	error_log( $msg, 3, "observer.log");
-}
+<div class="jumbotron m-5">
+	<h1 class="display-3">키워드 모니터링 툴</h1>
+	<p class="lead">
+		키워드를 순위를 집계하고 통계를 볼 수 있으며, 실시간 모니터링을 할 수 있습니다.
+	</p>
+	<hr class="my-4">
+	<p>메뉴를 선택하세요.</p>
+	<p class="lead">
+		<a class="btn btn-danger btn-lg" href="query.php?mode=monitoring" role="button">실시간 모니터링</a>
+		<a class="btn btn-primary btn-lg" href="query.php" role="button">통계</a>
+		<a class="btn btn-secondary btn-lg" href="keyword.php" role="button">집계 키워드 관리</a>
+	</p>
+</div>
+</body>
+</html>

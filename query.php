@@ -6,7 +6,9 @@ if (isset($_REQUEST['names']) ) setcookie("names", $_REQUEST['names'], time() + 
 <html>
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="css/query.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="css/query.css?dummy=<?php echo time()?>">
     <style>
         .selectable-keywords {
             margin-bottom: .5em;
@@ -20,23 +22,25 @@ if (isset($_REQUEST['names']) ) setcookie("names", $_REQUEST['names'], time() + 
     </style>
 </head>
 <body>
+<div class="content p-2">
 <?php
-include 'db.php';
+include 'lib.php';
 include 'function.php';
 ?>
-<h2>
-<a href="?mode=">Keyword Rank Statistics</a>
-<a href="?mode=monitoring">Realtime Keyword Monitoring</a>
-</h2>
+
+    <p class="lead">
+        <a class="btn btn-info btn-lg" href="query.php?mode=monitoring" role="button">실시간 모니터링</a>
+        <a class="btn btn-primary btn-lg" href="query.php" role="button">통계</a>
+        <a class="btn btn-secondary btn-lg" href="keyword.php" role="button">집계 키워드 관리</a>
+    </p>
 <?php
     date_default_timezone_set('UTC');
 	$date = date('Ymd');
 	$time = date('Hi', time() - 10 * 60 );
-    $q = "SELECT keyword FROM keyword_ranks WHERE `date`='$date' AND `time`>'$time' GROUP BY keyword";
-    $rows = $db->get_results( $q, ARRAY_N );
-    $ks = [];
-    foreach( $rows as $row ) $ks[] = $row[0];
-    $selectable_keywords = implode( ',', $ks );
+
+
+    $selectable_keywords = get_selectable_keywords();
+//    print_r($selectable_keywords);
 ?>
 <div class="selectable-keywords">
     <span class="caption">선택 가능한 키워드</span><span class="text"><?php echo $selectable_keywords ?></span>
@@ -262,7 +266,7 @@ if (!empty($graphs)) {
             $names = '';
             if(!empty($graph['names'] ) )$names =  implode(',', $graph['names']);
             $header = "$platform - ($platforms[keyword]) Title: $title. " . $names;
-            echo "<h4>$header</h4>";
+            echo "<h4 class='fs-md'>$header</h4>";
 
 
             $y = 0;
@@ -391,7 +395,7 @@ if (!empty($graphs)) {
     <li>Rank 가 0 인 것은 광고가 노출되지 않은 것이다.</li>
     <li>순위 집계가 되지 않은 기간을 파악 할 수 있습니다.</li>
 </ul>
-
+</div>
 </body>
 </html>
 
