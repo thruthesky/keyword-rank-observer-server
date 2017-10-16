@@ -49,7 +49,7 @@ if ( isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'monitoring' ) require 'mo
 $colors = ['red', 'lightgreen', 'blue', 'violet', 'yellow', 'grey',  'black'];
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 $hourStart = '0000';
-$hourEnd = '2400';
+$hourEnd = '2359';
 $yearStart = date('Y');
 $yearEnd = $yearStart;
 $monthStart = date('n');
